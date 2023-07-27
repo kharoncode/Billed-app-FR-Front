@@ -33,13 +33,13 @@ export default class {
       .bills()
       .list()
       .then(snapshot => {
-        snapshot.sort((a, b) => ((a.date < b.date) ? 1 : -1));
+        /* snapshot.sort((a, b) => ((a.date < b.date) ? 1 : -1)); */
         const bills = snapshot
           .map(doc => {
             try {
               return {
                 ...doc,
-                date: formatDate(doc.date),
+                /* date: formatDate(doc.date), */
                 status: formatStatus(doc.status)
               }
             } catch(e) {
@@ -48,7 +48,7 @@ export default class {
               console.log(e,'for',doc)
               return {
                 ...doc,
-                date: doc.date,
+                /* date: doc.date, */
                 status: formatStatus(doc.status)
               }
             }
