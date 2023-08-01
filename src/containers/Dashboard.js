@@ -134,19 +134,26 @@ export default class {
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
     if (this.counter % 2 === 0) {
+      bills.forEach(bill => {
+        $(`#open-bill${bill.id}`).off();
+      })
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
       $(`#status-bills-container${this.index}`)
         .html(cards(filteredBills(bills, getStatus(this.index))))
-      this.counter ++
+      this.counter=1
     } else {
+      bills.forEach(bill => {
+        $(`#open-bill${bill.id}`).off();
+      })
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
       $(`#status-bills-container${this.index}`)
         .html("")
-      this.counter ++
+      this.counter=0
     }
 
     bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+      $(`#open-bill${bill.id}`).on("click",(e) => this.handleEditTicket(e, bill, bills))
+      /* $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills)) */
     })
 
     return bills
