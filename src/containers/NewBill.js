@@ -18,6 +18,13 @@ export default class NewBill {
   
   handleChangeFile = e => {
     e.preventDefault()
+
+    const fileExtension = e.target.files[0].name.toLowerCase().match(/\.(jpg|png|jpeg)$/);
+    if(fileExtension === null) {
+      e.target.value = "";
+      alert(`Format du fichier non compatible : veuillez importer un fichier en ".jpeg", ".jpg" ou ".png".`)
+    }
+
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
@@ -44,12 +51,6 @@ export default class NewBill {
 
   handleSubmit = e => {
     e.preventDefault()
-
-    const fileExtension = this.document.querySelector(`input[data-testid="file"]`).files[0].name.toLowerCase().match(/\.(jpg|png|jpeg)$/);
-    if(fileExtension === null) {
-      console.log("error")
-      return false
-    }
 
     console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
