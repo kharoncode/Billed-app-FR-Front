@@ -1,4 +1,5 @@
 export const formatDate = (dateStr) => {
+  // if we are in test, we use date without format
   if (typeof jest !== 'undefined') {
     return dateStr;
   }

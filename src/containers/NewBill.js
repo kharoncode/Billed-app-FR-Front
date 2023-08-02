@@ -18,7 +18,7 @@ export default class NewBill {
   
   handleChangeFile = e => {
     e.preventDefault()
-
+    // Look if the exentension of the file match with jpg/png/jpeg. If not, remove the file and send an alert
     const fileExtension = e.target.files[0].name.toLowerCase().match(/\.(jpg|png|jpeg)$/);
     if(fileExtension === null) {
       e.target.value = "";

@@ -36,5 +36,14 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
+    test("Then it should show the justificatif when we click on icon-eye",  ()=>{
+      
+    })
+    test("Then it should redirect to NewBill when we click on button[btn-new-bill]",  ()=>{
+      
+    })
+    test("Then return bill with mock information",  ()=>{
+      
+    })
   })
 })

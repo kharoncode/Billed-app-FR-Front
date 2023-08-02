@@ -135,6 +135,7 @@ export default class {
     if (this.index === undefined || this.index !== index) this.index = index
     console.log(this.counter)
     if (this.counter % 2 === 0) {
+      // Remove Listener "click" on #open-bill
       bills.forEach(bill => {
         $(`#open-bill${bill.id}`).off();
       })
@@ -143,6 +144,7 @@ export default class {
         .html(cards(filteredBills(bills, getStatus(this.index))))
       this.counter++
     } else {
+      // Remove Listener "click" on #open-bill
       bills.forEach(bill => {
         $(`#open-bill${bill.id}`).off();
       })
