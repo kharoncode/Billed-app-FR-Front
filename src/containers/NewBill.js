@@ -22,7 +22,8 @@ export default class NewBill {
     const fileExtension = e.target.files[0].name.toLowerCase().match(/\.(jpg|png|jpeg)$/);
     if(fileExtension === null) {
       e.target.value = "";
-      alert(`Format du fichier non compatible : veuillez importer un fichier en ".jpeg", ".jpg" ou ".png".`)
+      alert(`Format du fichier non compatible : veuillez importer un fichier en ".jpeg", ".jpg" ou ".png".`);
+      return
     }
 
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]

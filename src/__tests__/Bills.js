@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 
-import {screen, waitFor} from "@testing-library/dom"
+import '@testing-library/jest-dom'
+/* import { getByRole, getByTestId, getByLabelText } from '@testing-library/dom' */
+import userEvent from '@testing-library/user-event'
+
+import {screen, waitFor, getByRole} from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
 import { ROUTES_PATH} from "../constants/routes.js";
@@ -39,10 +43,18 @@ describe("Given I am connected as an employee", () => {
     test("Then it should show the justificatif when we click on icon-eye",  ()=>{
       
     })
-    test("Then it should redirect to NewBill when we click on button[btn-new-bill]",  ()=>{
-      
-    })
-    test("Then return bill with mock information",  ()=>{
+    test("Then it should redirect to NewBill when we click on button New Bill", /* async */ ()=>{
+      /* Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee'
+      }))
+      const root = document.createElement("div")
+      root.setAttribute("id", "root")
+      document.body.append(root)
+      router()
+      window.onNavigate(ROUTES_PATH.Bills)
+      userEvent.click(getByRole(document.body, 'button[data-testid="btn-new-bill"]'))
+      await waitFor(() => screen.getByTestId('icon-window')) */
       
     })
   })
