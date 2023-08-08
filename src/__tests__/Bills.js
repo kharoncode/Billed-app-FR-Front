@@ -40,11 +40,13 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
+
     test("Then it should show the justificatif when we click on icon-eye",  ()=>{
       
     })
-    test("Then it should redirect to NewBill when we click on button New Bill", /* async */ ()=>{
-      /* Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+    
+    test("Then it should redirect to NewBill when we click on button New Bill", async ()=>{
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee'
       }))
@@ -53,9 +55,10 @@ describe("Given I am connected as an employee", () => {
       document.body.append(root)
       router()
       window.onNavigate(ROUTES_PATH.Bills)
-      userEvent.click(getByRole(document.body, 'button[data-testid="btn-new-bill"]'))
-      await waitFor(() => screen.getByTestId('icon-window')) */
-      
+      userEvent.click(screen.getByRole('button', 'data-testid="btn-new-bill"'))
+      await waitFor(() => screen.getByTestId('form-new-bill'));
+      const newBillForm = screen.getByTestId('form-new-bill');
+      expect(newBillForm).toBeDefined();
     })
   })
 })
