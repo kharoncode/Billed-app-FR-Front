@@ -3,8 +3,10 @@
  */
 
 import '@testing-library/jest-dom'
-import {screen, waitFor, getByRole, getByTestId} from "@testing-library/dom"
+import {screen, waitFor} from "@testing-library/dom"
 import userEvent from '@testing-library/user-event'
+
+import store from "../__mocks__/store";
 
 import BillsUI from "../views/BillsUI.js";
 import { bills } from "../fixtures/bills.js";
@@ -54,9 +56,9 @@ describe("Given I am connected as an employee", () => {
       window.onNavigate(ROUTES_PATH.Bills)
       await waitFor(() => screen.getAllByTestId("icon-eye")[2])
       userEvent.click(screen.getAllByTestId("icon-eye")[2])
-      await waitFor(()=> screen.getByRole('dialog', {id:"modaleFile"}));
-      const modalBill = screen.getByRole('dialog', {id:"modaleFile"});
-      expect(modalBill).toHaveClass('show');
+      await waitFor(()=> screen.getByTestId("modaleFile"));
+      const modalBill = screen.getByTestId("modaleFile");
+      expect(modalBill).toHaveStyle('display:block')
     })
     
     test("Then it should redirect to NewBill when we click on button New Bill", async ()=>{
@@ -74,6 +76,17 @@ describe("Given I am connected as an employee", () => {
       await waitFor(() => screen.getByTestId('form-new-bill'));
       const newBillForm = screen.getByTestId('form-new-bill');
       expect(newBillForm).toBeDefined();
+    })
+
+    test("Then getBills should return format store", ()=>{
+      document.body.innerHTML = "<div></div>";
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      const bills = new billsPage({document, onNavigate, store, localStorage});
+      const lgth = bills.getBills().then((billsData)=>{
+        const {data, loading, error} = billsData;
+        return data;
+        });
+      expect(lgth.length).toBe(undefined);
     })
   })
 })

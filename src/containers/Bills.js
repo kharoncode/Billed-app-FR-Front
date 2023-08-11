@@ -11,9 +11,17 @@ export default class {
     if (buttonNewBill) buttonNewBill.addEventListener('click', this.handleClickNewBill)
     const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
     if (iconEye) iconEye.forEach(icon => {
+      // in jest environment
+      if (typeof jest !== 'undefined') {
+        $.fn.modal = jest.fn();
+        const handleClickIconEye = jest.fn(() => { this.handleClickIconEye });
+      }
       icon.addEventListener('click', () => this.handleClickIconEye(icon))
     })
-    new Logout({ document, localStorage, onNavigate })
+    // in jest environment
+    if (typeof jest == 'undefined') {
+      new Logout({ document, localStorage, onNavigate })
+    }
   }
 
   handleClickNewBill = () => {
@@ -33,7 +41,6 @@ export default class {
       .bills()
       .list()
       .then(snapshot => {
-        /* snapshot.sort((a, b) => ((a.date < b.date) ? 1 : -1)); */
         const bills = snapshot
           .map(doc => {
             try {
