@@ -6,7 +6,7 @@ import '@testing-library/jest-dom'
 import {screen, waitFor} from "@testing-library/dom"
 import userEvent from '@testing-library/user-event'
 
-import store from "../__mocks__/store";
+import mockStore from "../__mocks__/store";
 
 import BillsUI from "../views/BillsUI.js";
 import { bills } from "../fixtures/bills.js";
@@ -78,15 +78,19 @@ describe("Given I am connected as an employee", () => {
       expect(newBillForm).toBeDefined();
     })
 
-    test("Then getBills should return format store", ()=>{
-      document.body.innerHTML = "<div></div>";
-      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
-      const bills = new billsPage({document, onNavigate, store, localStorage});
-      const lgth = bills.getBills().then((billsData)=>{
-        const {data, loading, error} = billsData;
-        return data;
-        });
-      expect(lgth.length).toBe(undefined);
+    test("Then getBills should return format store", async ()=>{
+      const mockDocument = {
+        querySelector: jest.fn(),
+        querySelectorAll: jest.fn()
+      };
+      const mockOnNavigate = jest.fn();
+      const bills = new billsPage({ 
+        document: mockDocument,
+        onNavigate: mockOnNavigate,
+        store: mockStore,
+        localStorage: localStorageMock,  });
+      const lgth = await bills.getBills()
+      expect(Object.keys(lgth).length).toBe(4);
     })
   })
 })
