@@ -21,11 +21,18 @@ export default class NewBill {
     // Look if the extension of the file match with jpg/png/jpeg. If not, remove the file and send an alert
     const fileExtension = e.target.files[0].name.toLowerCase().match(/\.(jpg|png|jpeg)$/);
     if(fileExtension === null) {
-      e.target.value = "";
-      alert(`Format du fichier non compatible : veuillez importer un fichier en ".jpeg", ".jpg" ou ".png".`);
+      e.target.files = null;
+      e.target.form.reset();
+      if(document.querySelector(`.iconError`) === null){
+        let errorIcone = `<p class='iconError' data-testid="icon-error">Format du fichier non compatible : veuillez importer un fichier en ".jpeg", ".jpg" ou ".png".</p>`;
+        e.target.insertAdjacentHTML("afterend", errorIcone);
+      }
       return
     }
-
+    if(document.querySelector(`.iconError`) !== null){
+      document.querySelector(`.iconError`).remove();
+    }
+    
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
