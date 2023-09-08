@@ -2,67 +2,106 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from "@testing-library/dom"
+import { fireEvent, screen, waitFor } from "@testing-library/dom"
 import userEvent from '@testing-library/user-event'
 
-import NewBillUI from "../views/NewBillUI.js"
-import NewBill from "../containers/NewBill.js"
+import NewBillUI from "../views/NewBillUI.js";
+import NewBill from "../containers/NewBill.js";
 import { ROUTES_PATH} from "../constants/routes.js";
 
+import mockStore from "../__mocks__/store";
 import {localStorageMock} from "../__mocks__/localStorage.js";
 
 import router from "../app/Router.js";
 
+jest.mock("../app/Store.js", () => mockStore);
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
     beforeEach(()=>{
-      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock });
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee',
         email: 'e@e'
-      }))
+      }));
       const root = document.createElement("div")
       root.setAttribute("id", "root")
       document.body.append(root)
       router()
       window.onNavigate(ROUTES_PATH.NewBill)
-    })
+    });
+
+    afterEach(() => {
+      window.localStorage.clear();
+    });
 
     test("Then NewBill icon in vertical layout should be highlighted", async () => {
-      await waitFor(() => screen.getByTestId('icon-mail'))
-      const mailIcon = screen.getByTestId('icon-mail')
+      await waitFor(() => screen.getByTestId('icon-mail'));
+      const mailIcon = screen.getByTestId('icon-mail');
       expect(mailIcon.classList.contains('active-icon')).toBe(true);
     })
 
-    test("Then Justificatif should be empty if we send a file with a wrong extension", ()=>{
-      const mockfile = new File(["test"], "test.pdf", { type: "application/pdf" });
-      const input = screen.getByTestId("file");
-      userEvent.upload(input, mockfile);
-      expect(input.files).toBeNull();
+    describe("When I send a file with a wrong extension", ()=>{
+      beforeEach(()=>{
+        const input = screen.getByTestId("file");
+        fireEvent.change(input, {
+          target: {
+            files: [new File(["wrong"], "wrong.pdf", { type: "application/pdf" })],
+          },
+        });
+      })
+      test("Then Justificatif should be empty", ()=>{
+        const input = screen.getByTestId("file");
+        expect(input.files.length).toEqual(0);
+      })
+      test("Then error message should disapear if we send a file with a right extension", ()=>{
+        const input = screen.getByTestId("file");
+        let iconError = document.querySelector('.iconError');
+        expect(iconError).not.toBeNull();
+        fireEvent.change(input, {
+          target: {
+            files: [new File(["right"], "right.png", { type: "image/png" })],
+          },
+        });
+        iconError = document.querySelector('.iconError');
+        expect(iconError).toBeNull();
+      })
+      
     })
 
-    test("Then error message should disapear if we send a file with a right extension", async ()=>{
-      const mockfilePDF = new File(["test"], "test.pdf", { type: "application/pdf" });
-      const mockfilePNG = new File(["hello"], "hello.png", { type: "image/png" });
-      const input = screen.getByTestId("file");
-      userEvent.upload(input, mockfilePDF);
-      await waitFor(()=> screen.getByTestId('icon-error'));
-      let iconError = document.querySelector('.iconError');
-      expect(iconError).not.toBeNull();
-      userEvent.upload(input, mockfilePNG);
-      iconError = document.querySelector('.iconError');
-      expect(iconError).toBeNull();
+    describe("When I send a file with a right extension",()=>{
+      test("Then Justificatif should not be empty",()=>{
+        const input = screen.getByTestId("file");
+        fireEvent.change(input, {
+          target: {
+            files: [new File(["right"], "right.png", { type: "image/png" })],
+          },
+        });
+        expect(input.files.length).not.toEqual(0);
+        }) 
     })
 
-    test("Then Justificatif should not be empty if we send a file with a right extension", ()=>{
-      const mockfile = new File(["hello"], "hello.png", { type: "image/png" });
-      const input = screen.getByTestId("file");
-      userEvent.upload(input, mockfile);
-      expect(input.files).not.toBeNull();
+    describe("When I Submit the form",()=>{
+      test("Then invalidate form should return NewBill page",()=>{
+        const form = screen.getByTestId("form-new-bill");
+        expect(form.reportValidity()).not.toBeTruthy();
+        fireEvent.submit(form);
+        expect(form).toBeTruthy();
+      })
+
+      test("Then handleSubmit methode should be called",()=>{
+        document.body.innerHTML = NewBillUI();
+        const newBill = new NewBill({ document, onNavigate, store: mockStore, localStorage: window.localStorage });
+        const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+        const form = screen.getByTestId("form-new-bill");
+        form.addEventListener("submit", handleSubmit);
+        fireEvent.submit(form);
+        expect(handleSubmit).toHaveBeenCalled();
+      })
     })
 
-    test("Then invalidate Submit should return NewBill page",async ()=>{
+    
+    /* test("Then invalidate Submit should return NewBill page",async ()=>{
       await waitFor(()=> screen.getByTestId("btn-send-bill"));
       screen.getByTestId("expense-type").value = "Transports";
       screen.getByTestId("expense-name").value = "Vol Test";
@@ -75,11 +114,11 @@ describe("Given I am connected as an employee", () => {
       const input = screen.getByTestId("file");
       expect(input.reportValidity()).not.toBeTruthy();
       //userEvent.upload(input, mockfile);
-      const submit = screen.getByTestId("form-new-bill");
-      userEvent.click(screen.getByTestId("btn-send-bill"));
-      expect(submit.reportValidity()).not.toBeTruthy();
-      expect(submit).toBeTruthy();
-    })
+      const form = screen.getByTestId("form-new-bill");
+      fireEvent.submit(form)
+      expect(form.reportValidity()).not.toBeTruthy();
+      expect(form).toBeTruthy();
+    }) */
 
   })
 })
