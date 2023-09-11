@@ -136,7 +136,7 @@ describe("Given I am a user connected as Employee", () => {
             return Promise.reject(new Error("Erreur 404"))
           }
         }})
-      window.onNavigate(ROUTES_PATH.Bills)
+      window.onNavigate(ROUTES_PATH.Bills);
       await new Promise(process.nextTick);
       const message = await screen.getByText(/Erreur 404/);
       expect(message).toBeTruthy();
