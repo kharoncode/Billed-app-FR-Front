@@ -3,14 +3,13 @@
  */
 
 import { fireEvent, screen, waitFor } from "@testing-library/dom"
-import userEvent from '@testing-library/user-event'
 
 import NewBillUI from "../views/NewBillUI.js";
 import NewBill from "../containers/NewBill.js";
-import { ROUTES, ROUTES_PATH} from "../constants/routes.js";
+import { ROUTES_PATH } from "../constants/routes.js";
 
 import mockStore from "../__mocks__/store";
-import {localStorageMock} from "../__mocks__/localStorage.js";
+import { localStorageMock } from "../__mocks__/localStorage.js";
 
 import router from "../app/Router.js";
 
@@ -48,9 +47,9 @@ describe("Given I am connected as an employee", () => {
           },
         });
       })
-      test("Then Justificatif should be empty", ()=>{
+      test("Then input file value should be empty", ()=>{
         const input = screen.getByTestId("file");
-        expect(input.files.length).toEqual(0);
+        expect(input.value).toEqual("");
       })
       test("Then error message should disapear if we send a file with a right extension", ()=>{
         const input = screen.getByTestId("file");
@@ -154,6 +153,28 @@ describe("Given I am a user connected as Employee", () => {
 
         expect(console.error).toBeCalled();
         const error = new Error("Erreur 500");
+        expect(console.error.mock.calls[0][0]).toEqual(error);
+      });
+      test("Send message to an API and fails with 404 message error", async () => {
+        document.body.innerHTML = NewBillUI();
+        mockStore.bills.mockImplementationOnce(() => {
+          return {
+            update : () =>  {
+              return Promise.reject(new Error("Erreur 404"));
+            }
+          }
+        });
+        const newBill = new NewBill({ document, onNavigate, store: mockStore, localStorage: window.localStorage });
+
+        const form = screen.getByTestId("form-new-bill");
+        const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+        form.addEventListener("submit", handleSubmit);
+        fireEvent.submit(form);
+
+        await new Promise(process.nextTick);
+
+        expect(console.error).toBeCalled();
+        const error = new Error("Erreur 404");
         expect(console.error.mock.calls[0][0]).toEqual(error);
       });
     });

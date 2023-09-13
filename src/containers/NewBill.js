@@ -21,9 +21,7 @@ export default class NewBill {
     // Look if the extension of the file match with jpg/png/jpeg. If not, remove the file and send an alert
     const fileExtension = e.target.files[0].name.toLowerCase().match(/\.(jpg|png|jpeg)$/);
     if(fileExtension === null) {
-      e.target.value = null;
-      e.target.files = [];
-      console.log(e.target.files.length)
+      e.target.value = "";
       if(document.querySelector(`.iconError`) === null){
         let errorIcone = `<p class='iconError' data-testid="icon-error">Format du fichier non compatible : veuillez importer un fichier en ".jpeg", ".jpg" ou ".png".</p>`;
         e.target.insertAdjacentHTML("afterend", errorIcone);
