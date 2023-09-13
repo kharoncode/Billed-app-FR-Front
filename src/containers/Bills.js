@@ -13,6 +13,7 @@ export default class {
     if (iconEye) iconEye.forEach(icon => {
       icon.addEventListener('click', () => this.handleClickIconEye(icon))
     });
+    new Logout({ document, localStorage, onNavigate })
   }
 
   handleClickNewBill = () => {
@@ -37,7 +38,6 @@ export default class {
             try {
               return {
                 ...doc,
-                /* date: formatDate(doc.date), */
                 status: formatStatus(doc.status)
               }
             } catch(e) {
