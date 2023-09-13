@@ -11,17 +11,8 @@ export default class {
     if (buttonNewBill) buttonNewBill.addEventListener('click', this.handleClickNewBill)
     const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
     if (iconEye) iconEye.forEach(icon => {
-      // in jest environment
-      if (typeof jest !== 'undefined') {
-        $.fn.modal = jest.fn();
-        const handleClickIconEye = jest.fn(() => { this.handleClickIconEye });
-      }
       icon.addEventListener('click', () => this.handleClickIconEye(icon))
-    })
-    // in jest environment
-    if (typeof jest == 'undefined') {
-      new Logout({ document, localStorage, onNavigate })
-    }
+    });
   }
 
   handleClickNewBill = () => {
